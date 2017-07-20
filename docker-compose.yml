@@ -1,0 +1,35 @@
+joomla_own:
+  container_name: webserver_apache
+  image: mustafri/joomlaweb
+  # volume /var/joomla/src/ is Joomla directory on local host which will be mounted to web conteiner`s /var/www/html/
+  #in sake of simple modify and access web directory
+  volumes:
+    - /var/joomla/src/:/var/www/html/
+  links:
+    - joomla_db
+  ports:
+    - 8080:80
+
+
+
+joomla_db:
+  container_name: mysql_db
+  image: mustafri/joomladb
+  #volume /var/joomla/db_data/ is a directory on local host which handle db files out of container
+  volumes:
+    - /var/joomla/db_data/:/var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_USER=joomla
+    - MYSQL_PASSWORD=joomla
+    - MYSQL_DATABASE=joomla
+
+
+joomla_nginx:
+  container_name: nginx_proxy
+  image: mustafri/joomlanginx
+
+  links:
+   - joomla_own
+  ports:
+   - 443:443
